@@ -1,0 +1,525 @@
+prime_backup:
+  command:
+    help:
+      no_help: No detailed help message for command {}
+    confirm:
+      sent: Confirming {} task
+      noop: Nothing to confirm
+      not_your_task: Nothing for you to confirm
+    abort:
+      sent: Aborting {} task
+      noop: Nothing to abort
+      no_permission: You don't have the permission to abort the current task
+      not_abort_able: The current task {} is not abort-able
+
+  task:
+    _base:
+      no_confirm: No choice has been made, task {} aborted
+      aborted: Task {} aborted
+    backup_clear_tag:
+      name: set backup tag
+      cleared: Cleared tag {1} of backup {0}
+      not_exists: Backup {0} does not have tag {1}
+    backup_create:
+      name: create backup
+      start: Creating backup, please wait
+      abort.save_wait_time_out: Waiting for the world to save timed out, aborting backup task
+      abort.unloaded: Plugin unloaded, backup task aborted
+      completed: 'Backup completed, ID {}, cost {}, total {} (+{})'
+      cost.hover: |-
+        save wait: {}
+        create backup: {}
+    backup_delete:
+      name: delete backup
+      multi_delete: 'Multiple backups will be deleted (amount={}): {}'
+      protected: Backup {} is protected and cannot be deleted
+      deleting: Deleting {}
+      deleted: Deleted backup {}, freed {}
+    backup_delete_range:
+      name: delete backup range
+      no_backup: No available backup to delete
+      to_delete_count: 'Found {} backups to be deleted:'
+      ellipsis.hover: Omitted {} backups
+      confirm_target: delete
+      deleted: Deleted {}
+      deleted.skipped: Skipped {} (missed)
+      done: Done, {} backups deleted, freed {}
+    backup_diff:
+      name: diff backup
+      no_diff: No difference between {} and {}
+      found_diff: 'Found {0} differences from {1} to {2}: {3}'
+      diff:
+        mode: mode changed
+        blob: blob changed
+        link_target: symlink target changed
+        owner: uid/gid changed
+        mtime: mtime changed
+        other: other
+    backup_export:
+      name: export backup
+      already_exists: File {} already exists
+      exporting: Exporting backup {}
+      unfinished: Backup export unfinished
+      exported: Exported backup {} to {}, cost {}, size {}
+      failures: 'Found {} errors during the export:'
+    backup_import:
+      name: import backup
+      file_not_found: File {} does not exist
+      not_a_file: Target {} is not a file
+      cannot_infer_backup_format: Cannot infer backup format from file {}, please specify explicitly
+      start: Importing backup from {} with format {}
+      backup_metadata_not_found: 'Backup import failed, no valid backup metadata in file {}: {}'
+      backup_metadata_not_found.suggestion:
+        Please ensure that the importing backup is a backup exported by {name}. You can also use the optional argument §7--auto-meta§r to generate a new metadata automatically
+      done: 'Backup imported from {}, ID {}'
+    backup_list:
+      name: list backup
+      title: Backup list
+      backup_count: 'There are {} backups:'
+      size: Size
+      next: Next Page
+      prev: Previous Page
+      aborted: List task aborted
+    backup_prune:
+      name: prune backups
+      nothing_to_prune: No available backup to prune
+      list_to_be_pruned: 'Backups to be pruned (amount={}): {}'
+      prune: Deleting backup {}
+      aborted: Prune task aborted
+      done: Finished pruning, removed {} backups, {} blobs, freed {}
+    backup_prune_all:
+      name: prune all backups
+      nothing_to_do: No enabled prune job, no thing to do
+      what:
+        regular: regular backups
+        temporary: temporary backups
+      start: Start pruning {}
+      done: Finished all prune jobs, removed {} backups, {} blobs, freed {}
+    backup_rename:
+      name: rename backup
+      modified: Modified the comment of backup {} to {}
+    backup_restore:
+      name: restore backup
+      no_backup: No available backup to restore
+      show_backup: Gonna restore the world to {}
+      confirm_target: restore
+      countdown: '{} second later, the world will §cbe restored§r to {}'
+      countdown.hover: Click me or enter command {} to abort restore
+    backup_set_tag:
+      name: set backup tag
+      set: Set tag {1} of backup {0} to {2}
+    backup_show:
+      name: show backup
+      title: 'Backup {}'
+      date: 'Creation date: {}'
+      comment: 'Comment: {}'
+      comment_edit: 'Click me to edit comment of {}'
+      stored_size: 'Size (stored): {} ({})'
+      raw_size: 'Size (raw): {}'
+      creator: 'Creator: {}'
+      creator.hover: 'Click to list backups created by {}'
+      tag.title: 'Tags (size={}):'
+      tag.empty_title: 'Tags: {}'
+      tag.empty: empty
+    backup_show_tag:
+      name: show backup tags
+      title: Tags of backup {}
+      amount: 'Tag amount: {}'
+      value_type: 'Value type: {}'
+      create: Click to create tag {}
+      edit: Click to edit tag {}
+      clear: Click to clear tag {}
+      not_exists: not exists
+    backup_show_tag_single:
+      name: show backup single tag
+      value: Tag {1} of backup {0} is {2}
+      not_exists: Backup {0} does not have tag {1}
+    crontab_list_job:
+      name: list crontab
+      title: Crontab job list
+      enabled: Enabled
+      disabled: Disabled
+      running: Running
+      paused: Paused
+      line.running: '{} {}, next: {} ({})'
+      line.paused: '{} {}'
+    crontab_operate:
+      name: operate crontab
+      disabled: Crontab job {} is disabled
+      pause.already: Crontab job {} is already paused
+      pause.done: Crontab job {} paused until plugin reload
+      pause.done.notes: If you want to disable it permanently, you need to modify related config
+      resume.already: 'Crontab job {} is already running. Next run at: {}'
+      resume.done: 'Crontab job {} resumed. Next run at: {}'
+    crontab_show:
+      name: show crontab
+      title: Crontab job {}
+      enabled: 'Enabled: {}'
+      running: 'Running: {}'
+      interval: 'Interval: {}'
+      crontab: 'Crontab: {}'
+      jitter: 'Jitter: {}'
+      next_run_date: 'Next at: {}'
+      quick_actions: 'Quick actions: {}'
+      pause: pause
+      pause.hover: Click to pause job {}
+      resume: resume
+      resume.hover: Click to resume job {}
+    db_inspect_backup:
+      name: inspect backup
+      title: 'Backup {}'
+      id: 'ID: {}'
+      timestamp: 'Timestamp (nanosecond): {} (date: {})'
+      creator: 'Creator: {} ({})'
+      comment.regular: 'Comment: {}'
+      comment.translated: 'Comment: {} ({})'
+      targets: 'Backup targets: {}'
+      tags: 'Tags: {}'
+      raw_size: 'Raw size: {} ({})'
+      stored_size: 'Stored size: {} ({})'
+      file_count:
+        all: 'File counts: {}'
+        file: 'Regular files: {}'
+        directory: 'Directories: {}'
+        symlink: 'Symlinks: {}'
+    db_inspect_blob:
+      name: inspect blob
+      title: 'Blob {}'
+      hash: 'Hash: {}'
+      compress: 'Compress: {}'
+      raw_size: 'Raw size: {} ({})'
+      stored_size: 'Stored size: {} ({})'
+      used_by: 'Associated file count: {}'
+    db_inspect_file:
+      name: inspect file
+      title: 'File {1} in backup {0}'
+      backup_id: 'Associated Backup: {}'
+      path: 'Path: {}'
+      mode: 'Mode: {} ({})'
+      content: 'Content: {}'
+      blob.hash: 'Blob hash: {}'
+      blob.compress: 'Blob compress: {}'
+      blob.raw_size: 'Blob raw size: {} ({})'
+      blob.stored_size: 'Blob stored size: {} ({})'
+      uid.full: 'Uid: {} / {}'
+      uid.simple: 'Uid: {}'
+      gid.full: 'Gid: {} / {}'
+      gid.simple: 'Gid: {}'
+      ctime: 'create time: {} ({})'
+      mtime: 'modify time: {} ({})'
+      atime: 'access time: {} ({})'
+    db_inspect_object_base:
+      hover:
+        backup_id: Click to inspect backup {}
+        blob_hash: Click to inspect blob {}
+    db_migrate_compress_method:
+      name: migrate compress method
+      missing_library:
+        Failed to import the target compress method, please make sure you have installed the required python library for {}.
+        Search compress_method in the document {} for more help
+      show_whats_going_on: Prepare for file pool compress method migration to {}, compress threshold {}
+      confirm_target: migrate
+      start: Migrating the compress method to {}, check console to see the progress
+      done: 'Migrated the compress method from to {}, blob stored size sum: {} -> {} ({})'
+    db_migrate_hash_method:
+      name: migrate hash method
+      hash_method_unchanged: The hash method is already {}
+      missing_library:
+        Failed to import the target hasher, please make sure you have installed the required python library for {}.
+        Search hash_method in the document {} for more help
+      show_whats_going_on: Prepare for file pool hash method migration, from {} to {}
+      confirm_target: migrate
+      start: Migrating the hash method from {} to {}, check console to see the progress
+      done: Migrated the hash method from {} to {}
+    db_overview:
+      name: overview database
+      title: Database overview
+      db_version: 'Database version: {}'
+      db_file_size: 'Database file size: {}'
+      hash_method: 'Hash method: {}'
+      backup_count: 'Backup count: {}'
+      file_count: 'File count: {}'
+      file_raw_size: 'File raw size sum: {}'
+      blob_count: 'Blob count: {}'
+      blob_stored_size: 'Blob stored size sum: {} ({})'
+      blob_raw_size: 'Blob raw size sum: {}'
+    db_vacuum:
+      name: tidy up database
+      start: Compacting database, please wait...
+      done: 'Database compaction complete, cost {}, size change: {} -> {} ({}) ({})'
+    db_validate:
+      name: validate database
+      nothing_to_validate: Nothing is requested to be validated
+      validate_blobs:
+        .: Start validating blobs, please wait...
+        done: Validated {} / {} blobs
+        all_ok: All {} blobs are healthy
+        found_bad_blobs: Found {} / {} bad blobs in total
+        invalid: 'Invalid blob amount: {}'
+        missing: 'Missing blob amount: {}'
+        corrupted: 'Corrupted blob amount: {}'
+        mismatched: 'Mismatched blob amount: {}'
+        orphan: 'Orphan blob amount: {}'
+        affected: 'Affected range: {} / {} files, {} / {} backups'
+        see_log: 'See log file {} for details and affected stuffs of these bad blobs'
+      validate_files:
+        .: Start validating files (including file, directory and symlink), please wait...
+        done: Validated {} / {} files
+        all_ok: All {} files are healthy
+        found_bad_files: Found {} / {} bad files in total
+        invalid: 'Invalid blob amount: {}'
+        bad_blob_relation: 'Bad blob relationship: {}'
+        file_blob_mismatched: 'File-blob mismatch: {}'
+      done: Validation done, cost {}
+    help:
+      name: show help
+      commands:
+        title: '[Commands Usages]'
+        content: |-
+          §7{prefix}§r: Display the welcome page
+          §7{prefix} help §e[<what>]§r: Display help message of all / given command
+          §7{prefix} make §e[<comment>]§r: Make a backup. §e<comment>§r is an optional comment message
+          §7{prefix} back §6[<backup_id>]§r: Restore to the given backup. See §7{prefix} help back§r for detailed help 
+          §7{prefix} list [...]§r: List backups with given filters. See §7{prefix} help list§r for detailed help
+          §7{prefix} show §6<backup_id>§r: Show detailed information of the given backup
+          §7{prefix} rename §6<backup_id>§r §e<comment>§r: Modify the comment of the given backup
+          §7{prefix} delete §6<backup_id> [<backup_id>...]§r: Delete the given backup. You can enter multiple backup IDs
+          §7{prefix} delete_range §6<backup_id_range>§r: Delete backups inside the given ID range
+          §7{prefix} export §6<backup_id> §7[...]§r: Export the given backup. See §7{prefix} help export§r for detailed help
+          §7{prefix} import §3<file_path> §7[...]§r: Import backup from an external file. See §7{prefix} help import§r for detailed help
+          §7{prefix} prune §6<backup_id>§r: Manually trigger a backup prune
+          §7{prefix} diff §6<backup_id_old> §6<backup_id_new>§r: Show file differences between two backups
+          §7{prefix} crontab §a<job_id> §7[...]§r: Crontab job operations. See §7{prefix} help crontab§r for help
+          §7{prefix} tag §6<backup_id> §7[...]§r: Tag operation on the given backup
+          §7{prefix} database [...]§r: Database operations. See §7{prefix} help database§r for help
+          §7{prefix} confirm§r: Confirm the current task execution
+          §7{prefix} abort§r: Abort the current task execution
+      arguments:
+        title: '[Arguments]'
+        content: |-
+          §6<backup_id>§r: A positive integer, the unique ID for a backup, e.g.: §612§r
+          §6<backup_id_range>§r: An integer closed interval, e.g.: §63-12§r, §64~9§r, §64~§r, §64~§r, §6*§r
+      other:
+        title: '[Others]'
+        nodes_with_help: 'Subcommands with detailed help: {}'
+        docs: 'Documentation: {}'
+        docs.hover: Click to open the url
+      node_help:
+        back: |-
+          §d[back Command Usage]§r
+          Restore the world to the given backup
+          §7{prefix} back §6[<backup_id>] §7[--flags]§r
+          §d[Arguments]§r
+          §3<backup_id>§r: The ID of the backup to restore. If not specified, the latest not temporary backup will be used
+          §d[Optional flags]§r
+          §7--confirm§r: Skip the confirm step and start the restore directly
+          §7--fail-soft§r: Skip files with export failure in the backup, so a single failure will not abort the export
+          §7--no-verify§r: Do not verify the exported file contents
+        crontab: |-
+          §d[crontab Command Usage]§r
+          Operate crontab jobs
+          §d[Usages]§r
+          §7{prefix}§r: Show all currently enabled crontab jobs
+          §7{prefix} §a<job_id>§r: Show status of the given crontab job
+          §7{prefix} §a<job_id> §7pause§r: Temporarily pause the given job. The job will still start on next plugin load
+          §7{prefix} §a<job_id> §7resume§r: Cancel the pause state of the given job, resume its run
+          §d[Arguments]§r
+          §a<job_id>§r: Available options: {job_ids}
+        database: |-
+          §d[database Command Usage]§r
+          Operate the core SQLite database of {name}
+          §d[Usages]§r
+          §7{prefix} database overview§r: Report an overview of the database
+          §7{prefix} database inspect backup §6<backup_id>§r: Inspect the internal data of the given backup
+          §7{prefix} database inspect file §6<backup_id> §3<file_path>§r: Inspect the internal data of the given file
+          §7{prefix} database inspect blob §d<blob_hash>§r: Inspect the internal data of the given blob
+          §7{prefix} database validate §a<part>§r: Validate the correctness of contents in the database. Might take a long time
+          §7{prefix} database vacuum§r: Compact the SQLite database manually, to reduce the size of the database file
+          §7{prefix} database migrate_compress_method <compress_method>§r: Migrate the currently used compress method to another. Affects all data, might take a long time
+          §7{prefix} database migrate_hash_method <hash_method>§r: Migrate the currently used hash method to another. Affects all data, might take a long time
+          {scheduled_compact_notes}
+          §d[Arguments]§r
+          §6<file_path>§r: Path of the file related to the backup source root
+          §d<blob_hash>§r: Hash value of the blob. Can be a prefix of the hash string as long as it's unique
+          §d<compress_method>§r: Available options: {compress_methods}
+          §d<hash_method>§r: Available options: {hash_methods}
+          §a<part>§r: 
+          - §ablobs§r: Validate the correctness of blobs, e.g. data size, hash value
+          - §afiles§r: Validate the correctness of file objects, e.g. the association between files and blobs
+          - §aall§r: Validate all of the above
+        database.scheduled_compact.on: 'Notes: With the current config, {name} will automatically prune the database. See {cmd}'
+        database.scheduled_compact.off: 'Notes: With the current config, scheduled database prune is disabled'
+        export: |-
+          §d[export Command Usage]§r
+          Export the given backup to the §3export§r folder
+          §7{prefix} export §6<backup_id> §3[<export_format>] §7[--flags]§r
+          §d[Arguments]§r
+          §3<export_format>§r: Available options: {export_formats}. Use §3tar§r format if not specified
+          §d[Optional flags]§r
+          §7--overwrite§r: Overwrites existing exported backup. By default, no export will be made if the output file exists
+          §7--fail-soft§r: Skip files with export failure in the backup, so a single failure will not abort the export. Notes: a corrupted file might damaged the tar-based file 
+          §7--no-verify§r: Do not verify the exported file contents
+          §7--no-meta§r: Do not add the backup metadata file {backup_meta_file_name} in the exported file
+          §d[Examples]§r
+          §7{prefix} export 12§r: Use the default §3tar§r format to export backup §612§r
+          §7{prefix} export 12 tar_gz§r: Use the §tar_gz§r format to export backup §612§r
+          §7{prefix} export 12 tar --fail-soft --no-verify§r: Export backup §612§r with best effort
+        import: |-
+          §d[import Command Usage]§r
+          Import an external backup from a given file path
+          §7{prefix} import §3<file_path> §3[<backup_format>] §7[--flags]§r
+          §d[Arguments]§r
+          §3<file_path>§r: Path of to the backup file to import. It can be an absolute path, or a related path (related to MCDR root directory).
+          If the path contains space character, you need to wrap the whole path with double quotes,
+          §3<backup_format>§r: Available options: {backup_formats}. If not specified, try inferring from the file name
+          §d[Optional flags]§r
+          §7--auto-meta§r: If the backup metadata file does not exist, create an auto-generated one based on the file content
+          §7--meta-override §e<meta_json>§r: An optional json object string. It overrides the metadata of the imported backup, regardless of whether the backup metadata file exists or not
+          §d[Examples]§r
+          §7{prefix} import /path/to/the/backup.tar.gz§r
+          §7{prefix} import /path/to/a/tarball/foo.bar tar§r
+          §7{prefix} import D:\storage\my_backup.zip§r
+          §7{prefix} import ./pb_files/export/backup_1.tgz tar_gz§r
+        list: |-
+          §d[list Command Usage]§r
+          List backups with given filters
+          §7{prefix} list [<page>] [--arg-key <arg-value>]§r
+          §d[Optional arguments]§r
+          §7--per-page §e<per_page>§r: Set number of backup displayed per page. Default: §e10§r
+          §7--creator §e<creator>§r: Show backup created by the given creator only
+          §7--from §b<start_date>§r: Show backup after the given date only
+          §7--to §b<end_date>§r: Show backup before the given date only
+          §7-a, --all§r: Show all backups. By default, hidden backups and temporary backups will not be shown
+          §7--flags§r: Show backup flags, based on the tags of the backup
+          §d[Examples]§r
+          §7{prefix} list --all --flags§r
+          §7{prefix} list --from 20231130§r
+          §7{prefix} list 3 --per-page 20§r
+        tag: |-
+          §d[tag Command Usage]§r
+          Operate tags on the given backup
+          §d[Usages]§r
+          §7{prefix} tag §6<backup_id>§r: Show all the tags of the backup. All known tags will be listed, regardless of their existence
+          §7{prefix} tag §6<backup_id> §b<tag_name>§r: Show the value of the given tag of the backup
+          §7{prefix} tag §6<backup_id> §b<tag_name> §7set §e<tag_value>§r: Set the value of the given tag for the backup
+          §7{prefix} tag §6<backup_id> §b<tag_name> §7clear§r: Clear the given tag of the backup
+      permission_denied: You don't have the permission to see help message of subcommand {}
+    welcome:
+      title: '{name} {version}'
+      common_commands: '[Common Commands]'
+      common_commands.hover: 'Enter command {} to see the full command list'
+      recent_backups: '[Latest {} Backups]'
+      quick_actions:
+        title: '[Quick Actions]'
+        create: 'Create a new backup'
+        create.comment: "I'm a comment"
+        restore: restore to the latest backup
+        restore_explain: To be precise, restore to the latest non-temporary backup
+
+  job:
+    _base:
+      found_ongoing:
+        unknown_task: unknown
+        skip: 'Found ongoing task {}, job {} execution skipped'
+        wait_retry: 'Found ongoing task {}, job {} will retry in {}'
+      completed: '{} completed, next execution at {}'
+      completed_with_error: '{} completed with error, next execution at {}'
+      next_run_date_paused: Paused
+    create_db_backup:
+      name: create database backup
+      name_titled: Create database backup
+    prune_backup:
+      name: prune backup
+      name_titled: Prune database backup
+    schedule_backup:
+      name: schedule backup
+      name_titled: Schedule backup
+      triggered: '{} triggered'
+      reset_on_backup: Detected new backup, timer reset. Next scheduled backup at {}
+    vacuum_sqlite:
+      name: compact database
+      name_titled: Compact database
+
+  error:
+    backup_file_not_found: Backup {} does not have file {}
+    backup_not_found: Backup with ID {} does not exist
+    blob_hash_not_unique: 'The given hash {} cannot uniquely identify a blob'
+    blob_hash_not_unique.candidates: 'Found at least {} candidates: {}'
+    blob_not_found: Blob with hash {} does not exist
+    db_locked: Task {} execution error cuz the database is locked. Please retry later
+    disabled: Plugin disabled
+    generic: Task {} execution error, see console for more error
+    missing_backup_id: Please supply the backup ID
+    node:
+      bad_date: Bad input date
+      bad_id_range: Bad ID Range
+      bad_hex_string: Bad hex string
+      invalid_json:
+        empty: Empty input
+        prefix: '"{{" prefix not found'
+        suffix: '"}}" suffix not found'
+        value: 'Json decode error: {}'
+    permission_denied: Permission denied
+    too_much_ongoing_task:
+      exclusive: 'Please wait for the ongoing task {} to finish'
+      try_abort: You can also abort the ongoing task
+      try_abort.hover: Click me or enter command {} to abort the ongoing task
+      generic: 'Too many pending tasks (maximum = {}), please wait for some to finish'
+
+  text_components:
+    backup_brief: 'backup {}: {}'
+    backup_comment:
+      none: no comment
+      scheduled_backup: Scheduled Backup
+      pre_restore: 'Automatic backup before restoring to #{}'
+    backup_full:
+      creator: 'Creator: {}'
+      restore: Restore to backup {}
+      delete: Delete backup {}
+      protected: Backup {} is protected
+    backup_id:
+      hover_id: 'Backup ID: {}'
+      hover_date: 'Date: {}'
+      hover_comment: 'Comment: {}'
+      hover_creator: 'Creator: {}'
+      hover_click_hint: Click to show details
+    command:
+      run: 'Click to run {}'
+      suggest: 'Click to complete {}'
+    confirm_hint:
+      base: 'Please choose within {}: [{}], [{}]'
+      confirm: Confirm {}
+      confirm.hover: Click me or enter command {} to confirm {}
+      abort: Abort {}
+      abort.hover: Click me or enter command {} to abort {}
+    crontab:
+      help_url: 'Crontab string explanation at: {}'
+    date_diff:
+      ago: '{} ago'
+      later: '{} later'
+    dual_size_hover: |-
+      Stored size: {} ({})
+      Raw size: {}
+    duration:
+      text: '{} {}'
+      s: second{}
+      m: minute{}
+      h: hour{}
+      d: day{}
+      plural_suffix: s
+    operator:
+      player: Player {}
+      console: Console
+      command_source: Command source {}
+      unknown: Unknown
+      prime_backup:
+        .: Prime Backup
+        import: Import
+        test: Test
+        scheduled_backup: Scheduled backup
+        pre_restore: Automatic backup before restore
+
+  backup_tag:
+    hidden: Hidden backup
+    temporary: Temporary backup
+    protected: Protected backup
