@@ -190,7 +190,6 @@ def on_message(server: PluginServerInterface, bot: CQHttp,
     for prefix in config.command_prefix:
         if prefix != "" and content.startswith(prefix):
             is_command = True
-            prefix = prefix
             break
 
     # if it's a command, process it and stop here

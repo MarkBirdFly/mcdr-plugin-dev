@@ -1,0 +1,35 @@
+websocket:
+  host: 127.0.0.1
+  port: 5701
+server_list:
+  game:
+    host: 127.0.0.1
+    port: 5705
+debug_mode: false
+groups:
+  main_groups:
+    - 123
+    - 1234
+  sync_groups:
+    - 123
+    - 1234
+  manager_groups:
+    - 123
+    - 1234
+command_prefix:
+  - /
+need_help_commands:
+help_msg: 
+  help: |
+    命令功能列表：
+    /help: 查看命令列表
+    /list [<server>]: 查看在线玩家列表(wip)
+    /server [<server>]: 查看服务器信息(wip)
+    /say [<server>] <msg>: 向指定服务器发送消息(wip)
+    /bound <player>: 绑定玩家名称
+    /query [qq|mc] [<qq>|<player>]: 查询绑定信息
+    /command <server> <command>: 在指定服务器执行命令(wip)
+    /reload [config|data|bot]: 重载配置文件
+    /debug thread: 获取调试信息
+host: 127.0.0.1
+port: 5701
