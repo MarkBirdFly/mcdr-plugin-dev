@@ -1,3 +1,5 @@
 test/*
 QQBridge/logs/*
 ChatBridge/.history/*
+ChatBridge/chatbridge/__pycache__/*
+release/*

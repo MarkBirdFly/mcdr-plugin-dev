@@ -26,6 +26,7 @@ class CQBot(websocket.WebSocketApp):
 			url += '?access_token={}'.format(self.config.access_token)
 		self.logger = ChatBridgeLogger('Bot', file_handler=chatClient.logger.file_handler)
 		self.logger.info('Connecting to {}'.format(url))
+		self.group_id = None
 		# noinspection PyTypeChecker
 		super().__init__(url, on_message=self.on_message, on_close=self.on_close)
 
@@ -38,7 +39,8 @@ class CQBot(websocket.WebSocketApp):
 				return
 			data = json.loads(message)
 			if data.get('post_type') == 'message' and data.get('message_type') == 'group':
-				if data.get('anonymous') is None and data['group_id'] == self.config.react_group_id:
+				if data['group_id'] in self.config.react_groups_id:
+					self.group_id = data['group_id']
 					self.logger.info('QQ chat message: {}'.format(data))
 					args = data['raw_message'].split(' ')
 
@@ -69,7 +71,7 @@ class CQBot(websocket.WebSocketApp):
 							command = args[0]
 							client = self.config.client_to_query_online
 							self.logger.info('Sending command "{}" to client {}'.format(command, client))
-							chatClient.send_command(client, command)
+							chatClient.send_command(client, command, {"group_id":self.group_id})
 						else:
 							self.send_text('ChatBridge 客户端离线')
 
@@ -87,7 +89,7 @@ class CQBot(websocket.WebSocketApp):
 						if chatClient.is_online:
 							client = self.config.client_to_query_stats
 							self.logger.info('Sending command "{}" to client {}'.format(command, client))
-							chatClient.send_command(client, command)
+							chatClient.send_command(client, command, {"group_id":self.group_id})
 						else:
 							self.send_text('ChatBridge 客户端离线')
 		except:
@@ -96,17 +98,19 @@ class CQBot(websocket.WebSocketApp):
 	def on_close(self, *args):
 		self.logger.info("Close connection")
 
-	def _send_text(self, text):
+	def _send_text(self, text, group_id):
 		data = {
 			"action": "send_group_msg",
 			"params": {
-				"group_id": self.config.react_group_id,
+				"group_id": group_id,
 				"message": text
 			}
 		}
 		self.send(json.dumps(data))
 
-	def send_text(self, text):
+	def send_text(self, text, group_id=None):
+		if group_id == None:
+			group_id = self.group_id
 		msg = ''
 		length = 0
 		lines = text.rstrip().splitlines(keepends=True)
@@ -114,12 +118,12 @@ class CQBot(websocket.WebSocketApp):
 			msg += lines[i]
 			length += len(lines[i])
 			if i == len(lines) - 1 or length + len(lines[i + 1]) > 500:
-				self._send_text(msg)
+				self._send_text(msg, group_id)
 				msg = ''
 				length = 0
 
-	def send_message(self, sender: str, message: str):
-		self.send_text('[{}] {}'.format(sender, message))
+	def send_message(self, sender: str, message: str, group_id = None):
+		self.send_text('[{}] {}'.format(sender, message), group_id)
 
 
 class CqHttpChatBridgeClient(ChatBridgeClient):
@@ -145,15 +149,16 @@ class CqHttpChatBridgeClient(ChatBridgeClient):
 			return
 		if payload.command.startswith('!!stats '):
 			result = StatsQueryResult.deserialize(payload.result)
+			group_id = payload.params.get("group_id")
 			if result.success:
 				messages = ['====== {} ======'.format(result.stats_name)]
 				messages.extend(result.data)
 				messages.append('总数：{}'.format(result.total))
-				cq_bot.send_text('\n'.join(messages))
+				cq_bot.send_text('\n'.join(messages), group_id)
 			elif result.error_code == 1:
-				cq_bot.send_text('统计信息未找到')
+				cq_bot.send_text('统计信息未找到', group_id)
 			elif result.error_code == 2:
-				cq_bot.send_text('StatsHelper 插件未加载')
+				cq_bot.send_text('StatsHelper 插件未加载', group_id)
 		elif payload.command == '!!online':
 			result = OnlineQueryResult.deserialize(payload.result)
 			cq_bot.send_text('====== 玩家列表 ======\n{}'.format('\n'.join(result.data)))
@@ -170,7 +175,8 @@ class CqHttpChatBridgeClient(ChatBridgeClient):
 			if payload.data.get('cqhttp_client.action') == 'send_text':
 				text = payload.data.get('text')
 				self.logger.info('Triggered custom text, sending message {} to qq'.format(text))
-				cq_bot.send_text(text)
+				for groups in payload.data.get('group_id'):
+					cq_bot.send_text(text, groups)
 		except:
 			self.logger.exception('Error in on_custom()')
 
