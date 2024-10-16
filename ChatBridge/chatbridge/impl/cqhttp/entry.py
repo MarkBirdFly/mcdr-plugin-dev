@@ -9,13 +9,62 @@ from chatbridge.core.client import ChatBridgeClient
 from chatbridge.core.network.protocol import ChatPayload, CommandPayload, CustomPayload
 from chatbridge.impl import utils
 from chatbridge.impl.cqhttp.config import CqHttpConfig
-from chatbridge.impl.cqhttp.copywritings import CQHelpMessage, StatsHelpMessage
+from chatbridge.impl.cqhttp.copywritings import *
 from chatbridge.impl.tis.protocol import StatsQueryResult, OnlineQueryResult
+from chatbridge.tools.i18n import I18n
 
 ConfigFile = 'ChatBridge_CQHttp.json'
 cq_bot: Optional['CQBot'] = None
 chatClient: Optional['CqHttpChatBridgeClient'] = None
+i18n: Optional['CQ_I18n'] = None
+config: Optional[CqHttpConfig] = None
 
+class CQ_I18n(I18n):
+	def __init__(self):
+		super().__init__()
+		self.logger = ChatBridgeLogger('CQ_I18n', file_handler=chatClient.logger.file_handler)
+	def update(self, i18n_dict, group_id):
+		if not i18n_dict:
+			cq_bot.send_text('json不能为空', group_id)
+			return
+		response = self.update_handle(i18n_dict)
+		self.i18n.update(i18n_dict)
+		self.write()
+		cq_bot.send_text(response, group_id)
+
+	def update_handle(self, i18n_dict):
+		response = '完成更改:\n'
+		removed, added, existed, updated= [],[],[],[]
+		for delkey in [key for key in i18n_dict if i18n_dict[key] == None]:
+			del self.i18n[delkey]
+			del i18n_dict[delkey]
+			removed.append(delkey)
+		for key, value in i18n_dict.items():
+			if key not in self.i18n:
+				added.append((key, value))
+			else:
+				if key == self.i18n[key]:
+					existed.append(key)
+				else:
+					updated.append((key, self.i18n[key], value))
+		if existed:
+			response += f'已存在:{existed}\n'
+		if removed:
+			response += f'删除了:{removed}\n'
+		if added:
+			added_response = ''
+			for key, value in added:
+				added_response += f'"{key}": "{value}"\n'
+			response += f'添加了:\n{added}'
+		if updated:
+			updated_response = ''
+			for key, org_value, value in updated:
+				updated_response += f'"{key}": "{org_value}" -> "{value}"\n'
+			response += f'更新了:\n{updated}'
+		counts = len(removed) + len(added) + len(updated)
+		if counts >1:
+			response += f'完成了{counts}个更改'
+		return response.strip()
 
 class CQBot(websocket.WebSocketApp):
 	def __init__(self, config: CqHttpConfig):
@@ -27,7 +76,6 @@ class CQBot(websocket.WebSocketApp):
 		self.logger = ChatBridgeLogger('Bot', file_handler=chatClient.logger.file_handler)
 		self.logger.info('Connecting to {}'.format(url))
 		self.group_id = None
-		# noinspection PyTypeChecker
 		super().__init__(url, on_message=self.on_message, on_close=self.on_close)
 
 	def start(self):
@@ -92,6 +140,26 @@ class CQBot(websocket.WebSocketApp):
 							chatClient.send_command(client, command, {"group_id":self.group_id})
 						else:
 							self.send_text('ChatBridge 客户端离线')
+					
+					if len(args) >= 1 and args[0] == '!!i18n':
+						self.logger.info('!!i18n command triggered')
+						group = message['group_id']
+						if args[1].startswith('{'):
+							try:
+								i18n_dict = json.loads(message['raw_message'].lstrip('!!i18n '))
+								i18n.update(i18n_dict, group)
+							except:
+								self.send_text('参数错误',group_id=group)
+								return
+						if len(args) == 2:
+							if args[1] in i18n.i18n:
+								self.send_text(f'“{args[1]}”的翻译是“{i18n(args[1])}”')
+							else:
+								self.send_text(f'“{args[1]}”暂无翻译')
+						elif len(args) == 3:
+							i18n.update({args[1]:args[2]}, self.group_id)
+						else:
+							self.send_text(I18nHelpMessage)
 		except:
 			self.logger.exception('Error in on_message()')
 
@@ -132,15 +200,24 @@ class CqHttpChatBridgeClient(ChatBridgeClient):
 		if cq_bot is None:
 			return
 		try:
-			try:
-				prefix, message = payload.message.split(' ', 1)
-			except:
-				pass
-			else:
-				if prefix == '!!qq':
-					self.logger.info('Triggered command, sending message {} to qq'.format(payload.formatted_str()))
-					payload.message = message
-					cq_bot.send_message(sender, payload.formatted_str())
+			if payload.type == 'chat':
+				try:
+					prefix, message = payload.message.split(' ', 1)
+				except:
+					pass
+				else:
+					for group_id in config.sync_groups_id:
+						cq_bot.send_message(sender, payload.formatted_str(), group_id)
+					if prefix == '!!qq':
+						self.logger.info('Triggered command, sending message {} to qq'.format(payload.formatted_str()))
+						payload.message = message
+						cq_bot.send_message(sender, payload.formatted_str(), config.main_group_id)
+			if payload.type == 'start_stop':
+				for group_id in config.react_groups_id:
+					cq_bot.send_message(sender, payload.message, group_id)
+			if payload.type == 'join_leave':
+				for group_id in config.sync_groups_id:
+					cq_bot.send_message(sender, payload.message, group_id)
 		except:
 			self.logger.exception('Error in on_message()')
 
@@ -151,7 +228,7 @@ class CqHttpChatBridgeClient(ChatBridgeClient):
 			result = StatsQueryResult.deserialize(payload.result)
 			group_id = payload.params.get("group_id")
 			if result.success:
-				messages = ['====== {} ======'.format(result.stats_name)]
+				messages = ['====== {} ======'.format(i18n(result.stats_name))]
 				messages.extend(result.data)
 				messages.append('总数：{}'.format(result.total))
 				cq_bot.send_text('\n'.join(messages), group_id)
@@ -182,12 +259,13 @@ class CqHttpChatBridgeClient(ChatBridgeClient):
 
 
 def main():
-	global chatClient, cq_bot
+	global chatClient, cq_bot, i18n, config
 	config = utils.load_config(ConfigFile, CqHttpConfig)
 	chatClient = CqHttpChatBridgeClient.create(config)
 	utils.start_guardian(chatClient)
 	utils.register_exit_on_termination()
 	print('Starting CQ Bot')
+	i18n = CQ_I18n()
 	cq_bot = CQBot(config)
 	cq_bot.start()
 	print('Bye~')

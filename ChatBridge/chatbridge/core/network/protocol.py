@@ -72,6 +72,7 @@ class KeepAlivePayload(AbstractPayload):
 class ChatPayload(AbstractPayload):
 	author: str
 	message: str
+	type: str
 
 	def formatted_str(self) -> str:
 		if self.author != '':

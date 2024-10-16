@@ -323,8 +323,8 @@ class ChatBridgeClient(ChatBridgeBase):
 	def send_chat(self, target: str, message: str, author: str = ''):
 		self.send_to(PacketType.chat, target, ChatPayload(author=author, message=message))
 
-	def broadcast_chat(self, message: str, author: str = ''):
-		self.send_to_all(PacketType.chat, ChatPayload(author=author, message=message))
+	def broadcast_chat(self, message: str, author: str = '', groups: Optional[Iterable[str]] = None, type: str = "chat"):
+		self.send_to_all(PacketType.chat, ChatPayload(author=author, message=message, type=type))
 
 	def send_command(self, target: str, command: str, params: Optional[Union[Serializable, dict]] = None):
 		self.send_to(PacketType.command, target, CommandPayload.ask(command, params))
