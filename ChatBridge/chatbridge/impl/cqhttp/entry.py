@@ -10,7 +10,9 @@ from chatbridge.core.network.protocol import ChatPayload, CommandPayload, Custom
 from chatbridge.impl import utils
 from chatbridge.impl.cqhttp.config import CqHttpConfig
 from chatbridge.impl.cqhttp.copywritings import *
+from chatbridge.impl.cqhttp.copywritings import *
 from chatbridge.impl.tis.protocol import StatsQueryResult, OnlineQueryResult
+from chatbridge.tools.i18n import I18n
 from chatbridge.tools.i18n import I18n
 
 ConfigFile = 'ChatBridge_CQHttp.json'
